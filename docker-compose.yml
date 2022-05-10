@@ -30,6 +30,15 @@ services:
         - "8080:8080"
       depends_on:
         - postgres
+  mongodb:
+    image: mongo:5.0
+    ports:
+      - 27017:27017
+    volumes:
+      - ~/apps/mongo:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongouser
+      - MONGO_INITDB_ROOT_PASSWORD=mongopass
   surfing-server:
     build: ./hobbies-surfing-server/
     ports:
