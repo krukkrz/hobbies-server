@@ -8,3 +8,11 @@ docker-compose up -d
 ```
 
 which starts the whole backend environment up.
+
+## Microservices
+This backend was built in microservices architecture and contains:
+
+| service        | language | framework |
+|----------------|----------|-----------|
+| keycloak       |          |           |
+| surfing server | java     | javalin   |ś
