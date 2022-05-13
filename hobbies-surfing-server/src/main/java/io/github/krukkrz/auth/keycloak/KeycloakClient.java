@@ -10,8 +10,13 @@ import static io.github.krukkrz.application.ApplicationContext.objectMapper;
 import static io.github.krukkrz.application.ApplicationContext.okHttpClient;
 
 public class KeycloakClient {
-    //todo take it from yml
-    private final String userInfoEndpoint = "http://localhost:8080/auth/realms/master/protocol/openid-connect/userinfo";
+
+    private final String userInfoEndpoint;
+
+    public KeycloakClient(String userInfoEndpoint) {
+        this.userInfoEndpoint = userInfoEndpoint;
+    }
+
 
     public UserInfo getUserInfo(String token) throws UnauthorizedException {
         Request request = new Request.Builder()
