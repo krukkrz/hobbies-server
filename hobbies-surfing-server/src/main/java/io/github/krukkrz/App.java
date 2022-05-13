@@ -1,8 +1,7 @@
 package io.github.krukkrz;
 
-import io.github.krukkrz.auth.Auth;
+import io.github.krukkrz.auth.UnauthorizedException;
 import io.javalin.Javalin;
-import io.javalin.core.security.AccessManager;
 
 import static io.github.krukkrz.application.ApplicationContext.auth;
 import static io.github.krukkrz.auth.Role.REGULAR_USER;
@@ -22,7 +21,7 @@ public class App {
             path("hello", () -> {
                 get(ctx -> ctx.result("hello world!"), REGULAR_USER);
             });
-        });
+        }).exception(UnauthorizedException.class, (e, ctx) -> ctx.status(401));
     }
 
 

@@ -5,4 +5,5 @@ public record UserInfo(
     Boolean email_verified,
     String preferred_username,
     RealmAccess realm_access
-) {}
+) {
+}

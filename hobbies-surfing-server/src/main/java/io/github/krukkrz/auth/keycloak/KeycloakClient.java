@@ -1,7 +1,8 @@
 package io.github.krukkrz.auth.keycloak;
 
+import io.github.krukkrz.auth.UnauthorizedException;
 import okhttp3.Request;
-import okhttp3.ResponseBody;
+import okhttp3.Response;
 
 import java.io.IOException;
 
@@ -10,22 +11,27 @@ import static io.github.krukkrz.application.ApplicationContext.okHttpClient;
 
 public class KeycloakClient {
     //todo take it from yml
-    private String userInfoEndpoint = "http://localhost:8080/auth/realms/master/protocol/openid-connect/userinfo";
+    private final String userInfoEndpoint = "http://localhost:8080/auth/realms/master/protocol/openid-connect/userinfo";
 
-    public UserInfo getUserInfo(String token) {
+    public UserInfo getUserInfo(String token) throws UnauthorizedException {
         Request request = new Request.Builder()
             .url(userInfoEndpoint)
             .addHeader("Authorization", "Bearer " + token)
             .build();
-        ResponseBody responseBody = null;
         try {
-            responseBody = okHttpClient().newCall(request).execute().body();
-            //todo debug why not working
-            return objectMapper().readValue(responseBody.string(), UserInfo.class);
+            var response = okHttpClient().newCall(request).execute();
+            handle401Response(response);
+            var objectMapper = objectMapper();
+            return objectMapper.readValue(response.body().string(), UserInfo.class);
         } catch (IOException e) {
             e.printStackTrace();
-            //todo handle unouthorised
             throw new RuntimeException(e);
+        }
+    }
+
+    private void handle401Response(Response response) throws UnauthorizedException {
+        if (response.code() == 401) {
+            throw new UnauthorizedException();
         }
     }
 }

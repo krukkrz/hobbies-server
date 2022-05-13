@@ -13,22 +13,30 @@ public class ApplicationContext {
     private static ObjectMapper objectMapper;
 
     public static KeycloakClient keycloakClient() {
-        if (keycloakClient == null) keycloakClient = new KeycloakClient();
+        if (keycloakClient == null) {
+            keycloakClient = new KeycloakClient();
+        }
         return keycloakClient;
     }
 
     public static Auth auth() {
-        if (auth == null) auth = new Auth(keycloakClient());
+        if (auth == null) {
+            auth = new Auth(keycloakClient());
+        }
         return auth;
     }
 
     public static OkHttpClient okHttpClient() {
-        if (okHttpClient == null) okHttpClient = new OkHttpClient();
+        if (okHttpClient == null) {
+            okHttpClient = new OkHttpClient();
+        }
         return okHttpClient;
     }
 
     public static ObjectMapper objectMapper() {
-        if (objectMapper == null) objectMapper = new ObjectMapper();
+        if (objectMapper == null) {
+            objectMapper = new ObjectMapper();
+        }
         return objectMapper;
     }
 }
