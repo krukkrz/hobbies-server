@@ -39,7 +39,7 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=mongouser
       - MONGO_INITDB_ROOT_PASSWORD=mongopass
-  surfing-server:
-    build: ./hobbies-surfing-server/
-    ports:
-      - "8081:8081"
+#  surfing-server:
+#    build: ./hobbies-surfing-server/
+#    ports:
+#      - "8081:8081"

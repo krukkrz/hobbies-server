@@ -18,6 +18,12 @@ public class MongoSpotsDao implements Dao<Spot> {
     public void save(Spot spot) {
         Document document = new Document();
         document.put("name", spot.getName());
+        document.put("country", spot.getCountry());
+        document.put("link", spot.getLink());
+        document.put("coolness", spot.getCoolness().name());
+        document.put("startDate", spot.getStartDate());
+        document.put("endDate", spot.getEndDate());
+        document.put("surfingType", spot.getSurfingType().name());
         collection.insertOne(document);
     }
 }
