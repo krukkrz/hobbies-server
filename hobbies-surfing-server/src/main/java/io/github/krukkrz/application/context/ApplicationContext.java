@@ -8,6 +8,7 @@ import io.github.krukkrz.auth.Auth;
 import io.github.krukkrz.auth.keycloak.KeycloakClient;
 import io.github.krukkrz.common.dao.MongoSpotsDao;
 import io.github.krukkrz.surfing.SpotsRepository;
+import io.github.krukkrz.surfing.SpotsService;
 import okhttp3.OkHttpClient;
 
 import java.io.FileInputStream;
@@ -25,6 +26,14 @@ public class ApplicationContext {
     private static MongoDatabase mongoDatabase;
     private static MongoSpotsDao mongoSpotsDao;
     private static SpotsRepository spotsRepository;
+    private static SpotsService spotsService;
+
+    public static SpotsService spotsService() {
+        if (spotsService == null) {
+            spotsService = new SpotsService(spotsRepository());
+        }
+        return spotsService;
+    }
 
     public static SpotsRepository spotsRepository() {
         if (spotsRepository == null) {
@@ -92,6 +101,7 @@ public class ApplicationContext {
     public static ObjectMapper objectMapper() {
         if (objectMapper == null) {
             objectMapper = new ObjectMapper();
+            objectMapper.findAndRegisterModules();
         }
         return objectMapper;
     }
