@@ -15,10 +15,9 @@ public class MongoSpotsDao implements Dao<Spot> {
     }
 
     @Override
-    public Spot save(Spot spot) {
+    public void save(Spot spot) {
         Document document = new Document();
         document.put("name", spot.getName());
         collection.insertOne(document);
-        return null;
     }
 }

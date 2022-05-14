@@ -1,7 +1,5 @@
 package io.github.krukkrz.surfing;
 
-import io.github.krukkrz.common.dao.Dao;
-import io.github.krukkrz.surfing.model.Spot;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,30 +7,32 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static io.github.krukkrz.utils.SpotGenerator.generateSpot;
+import static io.github.krukkrz.utils.SpotGenerator.generateSpotDto;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class SpotsRepositoryTest {
+public class SpotsServiceTest {
 
     @Mock
-    private Dao<Spot> dao;
+    private SpotsRepository repository;
 
-    private SpotsRepository spotsRepository;
+    private SpotsService service;
 
     @BeforeEach
     public void setup() {
-        spotsRepository = new SpotsRepository(dao);
+        service = new SpotsService(repository);
     }
 
     @Test
-    public void save_savesSurfSpotToDbAndReturnsSavedObject() {
+    public void create_convertsDtoToEntityAndSavesItToRepository() {
         //GIVEN
+        var spotDto = generateSpotDto();
         var spot = generateSpot();
 
         //WHEN
-        spotsRepository.save(spot);
+        service.create(spotDto);
 
         //THEN
-        verify(dao).save(spot);
+        verify(repository).save(spot);
     }
 }

@@ -2,6 +2,7 @@ package io.github.krukkrz.surfing.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 @Getter
 @Builder
 @AllArgsConstructor
+@EqualsAndHashCode
 public class Spot {
     private String id;
     private String name;
