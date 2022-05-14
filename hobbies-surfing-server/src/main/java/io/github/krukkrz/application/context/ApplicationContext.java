@@ -1,8 +1,13 @@
-package io.github.krukkrz.application;
+package io.github.krukkrz.application.context;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
 import io.github.krukkrz.auth.Auth;
 import io.github.krukkrz.auth.keycloak.KeycloakClient;
+import io.github.krukkrz.common.dao.MongoSpotsDao;
+import io.github.krukkrz.surfing.SpotsRepository;
 import okhttp3.OkHttpClient;
 
 import java.io.FileInputStream;
@@ -17,6 +22,31 @@ public class ApplicationContext {
     private static OkHttpClient okHttpClient;
     private static ObjectMapper objectMapper;
     private static Properties props;
+    private static MongoDatabase mongoDatabase;
+    private static MongoSpotsDao mongoSpotsDao;
+    private static SpotsRepository spotsRepository;
+
+    public static SpotsRepository spotsRepository() {
+        if (spotsRepository == null) {
+            spotsRepository = new SpotsRepository(mongoSpotsDao());
+        }
+        return spotsRepository;
+    }
+
+    public static MongoSpotsDao mongoSpotsDao() {
+        if (mongoSpotsDao == null) {
+            mongoSpotsDao = new MongoSpotsDao();
+        }
+        return mongoSpotsDao;
+    }
+
+    public static MongoDatabase mongoDatabase() {
+        if (mongoDatabase == null) {
+            MongoClient mongoClient = MongoClients.create("mongodb://mongouser:mongopass@localhost:27017");
+            mongoDatabase = mongoClient.getDatabase("surfing_spots");
+        }
+        return mongoDatabase;
+    }
 
     public static Properties props() {
         if (props == null) {

@@ -6,8 +6,8 @@ import okhttp3.Response;
 
 import java.io.IOException;
 
-import static io.github.krukkrz.application.ApplicationContext.objectMapper;
-import static io.github.krukkrz.application.ApplicationContext.okHttpClient;
+import static io.github.krukkrz.application.context.ApplicationContext.objectMapper;
+import static io.github.krukkrz.application.context.ApplicationContext.okHttpClient;
 
 public class KeycloakClient {
 

@@ -1,6 +1,6 @@
 package io.github.krukkrz.surfing;
 
-import io.github.krukkrz.dao.Dao;
+import io.github.krukkrz.common.dao.Dao;
 import io.github.krukkrz.surfing.model.Spot;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,10 +15,11 @@ import static io.github.krukkrz.surfing.model.SurfingType.SURFING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class SpotsServiceTest {
+public class SpotsRepositoryTest {
 
     @Mock
     private Dao<Spot> dao;
@@ -35,15 +36,11 @@ public class SpotsServiceTest {
         //GIVEN
         var spot = buildSpot();
 
-        var savedSpot = buildSpot();
-        savedSpot.setId("spot_id");
-        when(dao.save(any())).thenReturn(savedSpot);
-
         //WHEN
         var actual = spotsRepository.save(spot);
 
         //THEN
-        assertNotNull(actual.getId());
+        verify(spotsRepository).save(spot);
         assertEquals(actual.getName(), spot.getName());
         assertEquals(actual.getLink(), spot.getLink());
         assertEquals(actual.getCountry(), spot.getCountry());

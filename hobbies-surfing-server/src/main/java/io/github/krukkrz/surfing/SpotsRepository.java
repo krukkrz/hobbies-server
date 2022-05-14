@@ -1,6 +1,6 @@
 package io.github.krukkrz.surfing;
 
-import io.github.krukkrz.dao.Dao;
+import io.github.krukkrz.common.dao.Dao;
 import io.github.krukkrz.surfing.model.Spot;
 
 public class SpotsRepository {
@@ -11,7 +11,7 @@ public class SpotsRepository {
         this.dao = dao;
     }
 
-    public Spot save(Spot spot) {
-        return dao.save(spot);
+    public void save(Spot spot) {
+        dao.save(spot);
     }
 }
