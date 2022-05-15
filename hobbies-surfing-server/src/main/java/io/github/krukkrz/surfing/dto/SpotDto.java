@@ -6,10 +6,12 @@ import io.github.krukkrz.surfing.model.SurfingType;
 import lombok.Builder;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Builder
 public record SpotDto(
     String id,
+    UUID ref,
     String name,
     String link,
     String country,
@@ -20,6 +22,7 @@ public record SpotDto(
 ) {
     public static Spot toEntity(SpotDto dto) {
         return Spot.builder()
+            .ref(dto.ref())
             .name(dto.name())
             .link(dto.link())
             .country(dto.country())

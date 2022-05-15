@@ -19,4 +19,8 @@ public class SpotsHandler {
             ctx.status(400);
         }
     }
+
+    public static void handleRead(Context ctx) {
+
+    }
 }

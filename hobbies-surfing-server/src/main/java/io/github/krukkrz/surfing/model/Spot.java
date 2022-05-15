@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Setter
 @Getter
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode
 public class Spot {
     private String id;
+    private UUID ref;
     private String name;
     private String link;
     private String country;

@@ -37,6 +37,34 @@ public class SpotsHandlerTest {
     }
 
     @Test
+    public void handleReadAll_fetchAllSpotsFromService() {
+        //GIVEN
+        //WHEN
+        //THEN
+    }
+
+    @Test
+    public void handleReadAll_returnsEmptyListIfNoObjectsInDb() {
+        //GIVEN
+        //WHEN
+        //THEN
+    }
+
+    @Test
+    public void handleRead_fetchDtoByIdFromServiceAndReturnsIt() {
+        //GIVEN
+        //WHEN
+        //THEN
+    }
+
+    @Test
+    public void handleRead_returns404IfNoSuchSpotInDb() {
+        //GIVEN
+        //WHEN
+        //THEN
+    }
+
+    @Test
     public void handleCreate_acceptsDtoAndPassItToService() throws JsonProcessingException {
         //GIVEN
         var spotDto = generateSpotDto();
