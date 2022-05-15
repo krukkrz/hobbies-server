@@ -10,7 +10,6 @@ import java.util.UUID;
 
 @Builder
 public record SpotDto(
-    String id,
     UUID ref,
     String name,
     String link,
@@ -30,7 +29,6 @@ public record SpotDto(
             .startDate(dto.startDate())
             .endDate(dto.endDate())
             .coolness(dto.coolness())
-            .id(dto.id())
             .build();
     }
 }

@@ -1,4 +1,4 @@
-package io.github.krukkrz.auth.keycloak;
+package io.github.krukkrz.common.dao.keycloak;
 
 public record UserInfo(
     String sub,

@@ -1,5 +1,6 @@
 package io.github.krukkrz.surfing.model;
 
+import io.github.krukkrz.surfing.dto.SpotDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -24,4 +25,17 @@ public class Spot {
     private LocalDate endDate;
     private SurfingType surfingType;
     private Coolness coolness;
+
+    public static SpotDto toDto(Spot spot) {
+        return SpotDto.builder()
+            .ref(spot.getRef())
+            .name(spot.getName())
+            .startDate(spot.getStartDate())
+            .endDate(spot.getEndDate())
+            .surfingType(spot.getSurfingType())
+            .coolness(spot.getCoolness())
+            .link(spot.getLink())
+            .country(spot.getCountry())
+            .build();
+    }
 }

@@ -1,6 +1,6 @@
 package io.github.krukkrz.auth;
 
-import io.github.krukkrz.auth.keycloak.KeycloakClient;
+import io.github.krukkrz.common.dao.keycloak.KeycloakClient;
 import io.javalin.core.security.AccessManager;
 
 import java.util.Set;

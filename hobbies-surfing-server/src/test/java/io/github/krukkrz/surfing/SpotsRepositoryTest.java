@@ -8,8 +8,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 import static io.github.krukkrz.utils.SpotGenerator.generateSpot;
+import static io.github.krukkrz.utils.SpotGenerator.generateSpots;
+import static java.util.Collections.emptyList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class SpotsRepositoryTest {
@@ -34,5 +41,30 @@ public class SpotsRepositoryTest {
 
         //THEN
         verify(dao).save(spot);
+    }
+
+    @Test
+    public void findAll_returnsAllSavedSurfSpots() {
+        //GIVEN
+        var spots = generateSpots();
+        when(dao.findAll()).thenReturn(spots);
+
+        //WHEN
+        var actual = spotsRepository.findAll();
+
+        //THEN
+        assertEquals(actual, spots);
+    }
+
+    @Test
+    public void findAll_returnsEmptyListIfNoSpotsSaved() {
+        //GIVEN
+        when(dao.findAll()).thenReturn(emptyList());
+
+        //WHEN
+        var actual = spotsRepository.findAll();
+
+        //THEN
+        assertTrue(actual.isEmpty());
     }
 }
