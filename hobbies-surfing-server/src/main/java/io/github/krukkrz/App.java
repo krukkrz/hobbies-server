@@ -24,6 +24,7 @@ public class App {
                 get(ctx -> ctx.result("hello world!"), REGULAR_USER);
             });
             path("spots", () -> {
+                get(SpotsHandler::handleReadAll, REGULAR_USER);
                 post(SpotsHandler::handleCreate, REGULAR_USER);
             });
         }).exception(UnauthorizedException.class, (e, ctx) -> ctx.status(401));

@@ -1,9 +1,11 @@
 package io.github.krukkrz.surfing.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.krukkrz.surfing.model.Coolness;
 import io.github.krukkrz.surfing.model.Spot;
 import io.github.krukkrz.surfing.model.SurfingType;
 import lombok.Builder;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -14,7 +16,9 @@ public record SpotDto(
     String name,
     String link,
     String country,
+    @JsonFormat(pattern="yyyy-MM-dd")
     LocalDate startDate,
+    @JsonFormat(pattern="yyyy-MM-dd")
     LocalDate endDate,
     SurfingType surfingType,
     Coolness coolness

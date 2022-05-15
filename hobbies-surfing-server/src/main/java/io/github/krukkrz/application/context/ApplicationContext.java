@@ -1,5 +1,6 @@
 package io.github.krukkrz.application.context;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -13,6 +14,7 @@ import okhttp3.OkHttpClient;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -102,6 +104,7 @@ public class ApplicationContext {
         if (objectMapper == null) {
             objectMapper = new ObjectMapper();
             objectMapper.findAndRegisterModules();
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         }
         return objectMapper;
     }

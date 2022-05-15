@@ -27,7 +27,9 @@ public class KeycloakClient {
             var response = okHttpClient().newCall(request).execute();
             handle401Response(response);
             var objectMapper = objectMapper();
-            return objectMapper.readValue(response.body().string(), UserInfo.class);
+            var userInfo = objectMapper.readValue(response.body().string(), UserInfo.class);
+            response.close();
+            return userInfo;
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
