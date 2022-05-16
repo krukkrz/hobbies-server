@@ -10,14 +10,16 @@ import io.github.krukkrz.common.dao.keycloak.KeycloakClient;
 import io.github.krukkrz.common.dao.mongo.MongoSpotsDao;
 import io.github.krukkrz.surfing.SpotsRepository;
 import io.github.krukkrz.surfing.SpotsService;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Optional;
 import java.util.Properties;
 
+@Slf4j
 public class ApplicationContext {
 
     private static KeycloakClient keycloakClient;
@@ -29,6 +31,12 @@ public class ApplicationContext {
     private static MongoSpotsDao mongoSpotsDao;
     private static SpotsRepository spotsRepository;
     private static SpotsService spotsService;
+
+    private static boolean isTest = false;
+
+    public static void runTestMode() {
+        isTest = true;
+    }
 
     public static SpotsService spotsService() {
         if (spotsService == null) {
@@ -51,8 +59,12 @@ public class ApplicationContext {
         return mongoSpotsDao;
     }
 
+    public static void useEmbeddedMongodb(MongoDatabase db) {
+        mongoDatabase = db;
+    }
+
     public static MongoDatabase mongoDatabase() {
-        if (mongoDatabase == null) {
+        if (mongoDatabase == null && !isTest) {
             MongoClient mongoClient = MongoClients.create("mongodb://mongouser:mongopass@localhost:27017");
             mongoDatabase = mongoClient.getDatabase("surfing_spots");
         }
@@ -60,6 +72,19 @@ public class ApplicationContext {
     }
 
     public static Properties props() {
+        if (isTest && props == null) {
+            log.info("Test run - test app.properties file");
+            props = new Properties();
+            File propertiesFile = new File("src/test/resources/app.properties");
+
+            try {
+                props.load(new FileInputStream(propertiesFile));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return props;
+        }
+
         if (props == null) {
             props = new Properties();
             String rootPath = Optional.ofNullable(

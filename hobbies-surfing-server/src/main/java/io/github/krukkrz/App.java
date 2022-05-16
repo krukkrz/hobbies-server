@@ -18,10 +18,16 @@ import static io.javalin.apibuilder.ApiBuilder.post;
 
 @Slf4j
 public class App {
-    public static void main(String[] args) {
-        var auth = auth();
 
-        var app = create(
+    private static Javalin app;
+
+    public static void main(String[] args) {
+        getApp();
+    }
+
+    public static Javalin getApp() {
+        var auth = auth();
+        app = create(
             config -> {
                 config.accessManager(auth.accessManager);
                 config.requestLogger((ctx, ms) -> {
@@ -32,18 +38,19 @@ public class App {
         ).start(8081);
 
         app.routes(() -> {
-            path("hello", () -> {
-                get(ctx -> ctx.result("hello world!"), REGULAR_USER);
-            });
-            path("spots", () -> {
-                get(SpotsHandler::handleReadAll, REGULAR_USER);
-                get("/{ref}", SpotsHandler::handleReadByRef, REGULAR_USER);
-                post(SpotsHandler::handleCreate, REGULAR_USER);
-            });
-        }).exception(UnauthorizedException.class, (e, ctx) -> ctx.status(401))
+                path("hello", () -> {
+                    get(ctx -> ctx.result("hello world!"), REGULAR_USER);
+                });
+                path("spots", () -> {
+                    get(SpotsHandler::handleReadAll, REGULAR_USER);
+                    get("/{ref}", SpotsHandler::handleReadByRef, REGULAR_USER);
+                    post(SpotsHandler::handleCreate, REGULAR_USER);
+                });
+            }).exception(UnauthorizedException.class, (e, ctx) -> ctx.status(401))
             .exception(NoSuchElementException.class, (e, ctx) -> {
                 ctx.status(404);
                 ctx.json(new ErrorResponse(e.getMessage()));
             });
+        return app;
     }
 }
