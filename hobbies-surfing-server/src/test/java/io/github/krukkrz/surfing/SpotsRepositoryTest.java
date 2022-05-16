@@ -1,6 +1,7 @@
 package io.github.krukkrz.surfing;
 
 import io.github.krukkrz.common.dao.Dao;
+import io.github.krukkrz.common.exceptions.MultipleEntitiesFound;
 import io.github.krukkrz.surfing.model.Spot;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,11 +10,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static io.github.krukkrz.utils.SpotGenerator.generateSpot;
 import static io.github.krukkrz.utils.SpotGenerator.generateSpots;
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -66,5 +70,43 @@ public class SpotsRepositoryTest {
 
         //THEN
         assertTrue(actual.isEmpty());
+    }
+
+    @Test
+    public void findByRef_returnsOptionalWithSpotIfFound() {
+        //GIVEN
+        var ref = "ref";
+        var spot = generateSpot();
+        when(dao.findByRef(ref)).thenReturn(spot);
+
+        //WHEN
+        var actual = spotsRepository.findByRef(ref);
+
+        //THEN
+        assertFalse(actual.isEmpty());
+        assertEquals(actual.get(), spot);
+    }
+
+    @Test
+    public void findByRef_returnsEmptyOptionalIfNoSuchSpotInDb() {
+        //GIVEN
+        var ref = "ref";
+        when(dao.findByRef(ref)).thenReturn(null);
+
+        //WHEN
+        var actual = spotsRepository.findByRef(ref);
+
+        //THEN
+        assertTrue(actual.isEmpty());
+    }
+
+    @Test
+    public void findByRef_throwsExceptionIfTwoDocumentsWithSameRefFound() {
+        //GIVEN
+        var ref = "ref";
+        when(dao.findByRef(ref)).thenThrow(new MultipleEntitiesFound());
+
+        //WHEN //THEN
+        assertThrows(MultipleEntitiesFound.class, () -> spotsRepository.findByRef(ref));
     }
 }

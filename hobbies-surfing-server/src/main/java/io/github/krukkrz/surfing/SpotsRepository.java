@@ -4,6 +4,7 @@ import io.github.krukkrz.common.dao.Dao;
 import io.github.krukkrz.surfing.model.Spot;
 
 import java.util.List;
+import java.util.Optional;
 
 public class SpotsRepository {
 
@@ -19,5 +20,9 @@ public class SpotsRepository {
 
     public List<Spot> findAll() {
         return dao.findAll();
+    }
+
+    public Optional<Spot> findByRef(String ref) {
+        return Optional.ofNullable(dao.findByRef(ref));
     }
 }

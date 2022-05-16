@@ -46,6 +46,11 @@ public class MongoSpotsDao implements Dao<Spot> {
         return documents.stream().map(this::readSpot).toList();
     }
 
+    @Override
+    public Spot findByRef(String ref) {
+        return null;
+    }
+
     private Spot readSpot(Document document) {
         try {
             return objectMapper().readValue(document.toJson(), Spot.class);
