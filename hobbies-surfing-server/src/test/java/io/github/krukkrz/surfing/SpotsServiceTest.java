@@ -10,12 +10,16 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
+import static io.github.krukkrz.utils.SpotGenerator.generateSpot;
 import static io.github.krukkrz.utils.SpotGenerator.generateSpotDto;
 import static io.github.krukkrz.utils.SpotGenerator.generateSpots;
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,6 +35,30 @@ public class SpotsServiceTest {
     @BeforeEach
     public void setup() {
         service = new SpotsService(repository);
+    }
+
+    @Test
+    public void findByRef_returnsDtoSpotsFromRepository() {
+        //GIVEN
+        var ref = "ref";
+        var spot = generateSpot();
+        when(repository.findByRef(ref)).thenReturn(Optional.of(spot));
+
+        //WHEN
+        var spotDto = service.findByRef(ref);
+
+        //THEN
+        assertSpotDtoEqualsSpot(spotDto, spot);
+    }
+
+    @Test
+    public void findByRef_throwsNoSuchElementExceptionIfNoSpotForRef() {
+        //GIVEN
+        var ref = "ref";
+        when(repository.findByRef(ref)).thenReturn(Optional.empty());
+
+        //WHEN //THEN
+        assertThrows(NoSuchElementException.class, () -> service.findByRef(ref));
     }
 
     @Test

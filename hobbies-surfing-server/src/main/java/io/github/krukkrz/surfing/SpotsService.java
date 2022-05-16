@@ -4,6 +4,7 @@ import io.github.krukkrz.surfing.dto.SpotDto;
 import io.github.krukkrz.surfing.model.Spot;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -28,5 +29,11 @@ public class SpotsService {
             .stream()
             .map(Spot::toDto)
             .collect(Collectors.toList());
+    }
+
+    public SpotDto findByRef(String ref) {
+        return repository.findByRef(ref)
+            .map(Spot::toDto)
+            .orElseThrow(() -> new NoSuchElementException("Spot not found"));
     }
 }
