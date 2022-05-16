@@ -26,7 +26,9 @@ public class SpotsHandler {
         ctx.status(200);
     }
 
-    public static void handleRead(Context ctx) {
-
+    public static void handleReadByRef(Context ctx) {
+        var spot = spotsService().findByRef(ctx.pathParam("ref"));
+        ctx.json(spot);
+        ctx.status(200);
     }
 }

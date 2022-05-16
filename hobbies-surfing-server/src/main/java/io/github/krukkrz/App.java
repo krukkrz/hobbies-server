@@ -1,9 +1,12 @@
 package io.github.krukkrz;
 
 import io.github.krukkrz.auth.UnauthorizedException;
+import io.github.krukkrz.common.ErrorResponse;
 import io.github.krukkrz.surfing.SpotsHandler;
 import io.javalin.Javalin;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.NoSuchElementException;
 
 import static io.github.krukkrz.application.context.ApplicationContext.auth;
 import static io.github.krukkrz.auth.Role.REGULAR_USER;
@@ -34,8 +37,13 @@ public class App {
             });
             path("spots", () -> {
                 get(SpotsHandler::handleReadAll, REGULAR_USER);
+                get("/{ref}", SpotsHandler::handleReadByRef, REGULAR_USER);
                 post(SpotsHandler::handleCreate, REGULAR_USER);
             });
-        }).exception(UnauthorizedException.class, (e, ctx) -> ctx.status(401));
+        }).exception(UnauthorizedException.class, (e, ctx) -> ctx.status(401))
+            .exception(NoSuchElementException.class, (e, ctx) -> {
+                ctx.status(404);
+                ctx.json(new ErrorResponse(e.getMessage()));
+            });
     }
 }

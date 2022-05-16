@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static io.github.krukkrz.utils.SpotGenerator.generateSpotDto;
 import static io.github.krukkrz.utils.SpotGenerator.generateSpotDtos;
@@ -46,6 +47,22 @@ public class SpotsHandlerTest {
     }
 
     @Test
+    public void handleReadByRef_fetchSpotByRefFromServiceAndReturnsIt() {
+        //GIVEN
+        var spot = generateSpotDto();
+        var ref = "ref";
+        when(ctx.pathParam("ref")).thenReturn(ref);
+        when(service.findByRef(ref)).thenReturn(spot);
+
+        //WHEN
+        SpotsHandler.handleReadByRef(ctx);
+
+        //THEN
+        verify(ctx).status(200);
+        verify(ctx).json(spot);
+    }
+
+    @Test
     public void handleReadAll_fetchAllSpotsFromService() {
         //GIVEN
         var spots = generateSpotDtos();
@@ -71,22 +88,6 @@ public class SpotsHandlerTest {
         //THEN
         verify(ctx).status(200);
         verify(ctx).json(spots);
-    }
-
-    @Test
-    public void handleRead_fetchDtoByIdFromServiceAndReturnsIt() {
-        //GIVEN
-        //WHEN
-        //THEN
-        //todo implement this test!
-    }
-
-    @Test
-    public void handleRead_returns404IfNoSuchSpotInDb() {
-        //GIVEN
-        //WHEN
-        //THEN
-        //todo implement this test!
     }
 
     @Test

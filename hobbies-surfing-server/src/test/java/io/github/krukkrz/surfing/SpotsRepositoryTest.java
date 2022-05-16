@@ -77,7 +77,7 @@ public class SpotsRepositoryTest {
         //GIVEN
         var ref = "ref";
         var spot = generateSpot();
-        when(dao.findByRef(ref)).thenReturn(spot);
+        when(dao.findByRef(ref)).thenReturn(Optional.of(spot));
 
         //WHEN
         var actual = spotsRepository.findByRef(ref);
@@ -91,7 +91,7 @@ public class SpotsRepositoryTest {
     public void findByRef_returnsEmptyOptionalIfNoSuchSpotInDb() {
         //GIVEN
         var ref = "ref";
-        when(dao.findByRef(ref)).thenReturn(null);
+        when(dao.findByRef(ref)).thenReturn(Optional.empty());
 
         //WHEN
         var actual = spotsRepository.findByRef(ref);

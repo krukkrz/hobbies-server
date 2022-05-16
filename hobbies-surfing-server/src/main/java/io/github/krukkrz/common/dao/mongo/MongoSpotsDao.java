@@ -4,12 +4,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import io.github.krukkrz.common.dao.Dao;
+import io.github.krukkrz.common.exceptions.MultipleEntitiesFound;
 import io.github.krukkrz.surfing.model.Spot;
 import org.bson.Document;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import static com.mongodb.client.model.Filters.eq;
 import static io.github.krukkrz.application.context.ApplicationContext.mongoDatabase;
 import static io.github.krukkrz.application.context.ApplicationContext.objectMapper;
 
@@ -43,15 +46,22 @@ public class MongoSpotsDao implements Dao<Spot> {
             documents.add(cursor.next());
         }
         cursor.close();
-        return documents.stream().map(this::readSpot).toList();
+        return documents.stream().map(this::toSpot).toList();
     }
 
     @Override
-    public Spot findByRef(String ref) {
-        return null;
+    public Optional<Spot> findByRef(String ref) {
+        var cursor = collection.find(eq("ref", ref)).iterator();
+        var documents = new ArrayList<Document>();
+        while (cursor.hasNext()) {
+            documents.add(cursor.next());
+        }
+        cursor.close();
+        if (documents.size() > 1) throw new MultipleEntitiesFound();
+        return documents.stream().map(this::toSpot).findAny();
     }
 
-    private Spot readSpot(Document document) {
+    private Spot toSpot(Document document) {
         try {
             return objectMapper().readValue(document.toJson(), Spot.class);
         } catch (JsonProcessingException e) {

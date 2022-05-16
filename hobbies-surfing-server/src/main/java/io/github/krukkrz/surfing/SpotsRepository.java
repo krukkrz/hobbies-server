@@ -23,6 +23,6 @@ public class SpotsRepository {
     }
 
     public Optional<Spot> findByRef(String ref) {
-        return Optional.ofNullable(dao.findByRef(ref));
+        return dao.findByRef(ref);
     }
 }
