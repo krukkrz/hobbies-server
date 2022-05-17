@@ -1,8 +1,7 @@
 package io.github.krukkrz.surfing.integrationTests;
 
-import com.mongodb.BasicDBObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
@@ -17,14 +16,16 @@ import io.github.krukkrz.common.dao.keycloak.KeycloakClient;
 import io.github.krukkrz.common.dao.keycloak.RealmAccess;
 import io.github.krukkrz.common.dao.keycloak.UserInfo;
 import io.javalin.Javalin;
+import okhttp3.Request;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
+import java.util.function.Consumer;
 
-import static io.github.krukkrz.application.context.ApplicationContext.mongoDatabase;
+import static io.github.krukkrz.application.context.ApplicationContext.objectMapper;
 import static io.github.krukkrz.application.context.ApplicationContext.runTestMode;
 import static io.github.krukkrz.application.context.ApplicationContext.useEmbeddedMongodb;
 import static io.github.krukkrz.application.context.ApplicationContext.useMockedKeycloakClient;
@@ -70,23 +71,14 @@ public abstract class AbstractIntegrationTest {
     }
 
     @AfterEach
-    public void afterEach() {
+    public void after() {
         if (this.mongod != null) {
             this.mongod.stop();
             this.mongodExe.stop();
         }
     }
 
-    //    @Test
-    public void shouldCreateNewObjectInEmbeddedMongoDb() {
-        // given
-        mongoDatabase().createCollection("testCollection");
-        MongoCollection<BasicDBObject> col = mongoDatabase().getCollection("testCollection", BasicDBObject.class);
-
-        // when
-        col.insertOne(new BasicDBObject("testDoc", new Date()));
-
-        // then
-        assertEquals(1L, col.countDocuments());
-    }
+    protected Consumer<Request.Builder> authorizationHeaders = r -> {
+        r.addHeader("Authorization", "Bearer token");
+    };
 }
