@@ -2,6 +2,7 @@ package io.github.krukkrz.surfing.integrationTests;
 
 import io.javalin.testtools.JavalinTest;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 import static io.github.krukkrz.application.context.ApplicationContext.objectMapper;
 import static io.github.krukkrz.utils.SpotGenerator.generateSpotDto;
@@ -15,9 +16,9 @@ public class CreateSpotTest extends AbstractIntegrationTest {
             //GIVEN
             var spotDto = generateSpotDto();
             var json = objectMapper().writeValueAsString(spotDto);
-            //todo mock keycloak
+
             //WHEN
-            var response = client.post("spots", json);
+            var response = client.post("/spots", json, r -> {r.addHeader("Authorization", "Bearer token");});
 
             //THEN
             assertEquals(response.code(), 201);

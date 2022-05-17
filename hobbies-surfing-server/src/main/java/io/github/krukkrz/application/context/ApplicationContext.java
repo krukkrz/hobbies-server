@@ -111,6 +111,10 @@ public class ApplicationContext {
         return keycloakClient;
     }
 
+    public static void useMockedKeycloakClient(KeycloakClient mockedKeycloakClient) {
+        keycloakClient = mockedKeycloakClient;
+    }
+
     public static Auth auth() {
         if (auth == null) {
             auth = new Auth(keycloakClient());
