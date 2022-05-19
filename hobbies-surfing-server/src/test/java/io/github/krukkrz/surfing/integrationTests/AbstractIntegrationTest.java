@@ -1,6 +1,5 @@
 package io.github.krukkrz.surfing.integrationTests;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.mongo.MongodExecutable;
@@ -17,7 +16,6 @@ import io.github.krukkrz.common.dao.keycloak.RealmAccess;
 import io.github.krukkrz.common.dao.keycloak.UserInfo;
 import io.javalin.Javalin;
 import okhttp3.Request;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -25,11 +23,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static io.github.krukkrz.application.context.ApplicationContext.objectMapper;
+import static io.github.krukkrz.application.context.ApplicationContext.clearContext;
 import static io.github.krukkrz.application.context.ApplicationContext.runTestMode;
 import static io.github.krukkrz.application.context.ApplicationContext.useEmbeddedMongodb;
 import static io.github.krukkrz.application.context.ApplicationContext.useMockedKeycloakClient;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -44,23 +41,25 @@ public abstract class AbstractIntegrationTest {
     private KeycloakClient mockedKeycloakClient;
 
     protected Javalin app;
+    private static final MongodStarter starter = MongodStarter.getDefaultInstance();
+
 
     @BeforeEach
     public void setup() throws IOException, UnauthorizedException {
         runTestMode();
 
-        MongodStarter starter = MongodStarter.getDefaultInstance();
         String bindIp = "localhost";
-        int port = 12345;
+        int port = Network.getFreeServerPort();
         MongodConfig mongodConfig = MongodConfig.builder()
                 .version(Version.Main.PRODUCTION)
                 .net(new Net(bindIp, port, Network.localhostIsIPv6()))
                 .build();
+
         this.mongodExe = starter.prepare(mongodConfig);
         this.mongod = mongodExe.start();
         this.mongo = new MongoClient(bindIp, port);
-        MongoDatabase db = mongo.getDatabase(DATABASE_NAME);
 
+        MongoDatabase db = mongo.getDatabase(DATABASE_NAME);
         useEmbeddedMongodb(db);
         mockedKeycloakClient = mock(KeycloakClient.class);
         useMockedKeycloakClient(mockedKeycloakClient);
@@ -71,11 +70,12 @@ public abstract class AbstractIntegrationTest {
     }
 
     @AfterEach
-    public void after() {
-        if (this.mongod != null) {
-            this.mongod.stop();
-            this.mongodExe.stop();
+    public void teardown() {
+        if (mongod != null) {
+            mongod.stop();
+            mongodExe.stop();
         }
+        clearContext();
     }
 
     protected Consumer<Request.Builder> authorizationHeaders = r -> {

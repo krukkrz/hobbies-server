@@ -38,6 +38,18 @@ public class ApplicationContext {
         isTest = true;
     }
 
+    public static void clearContext() {
+        keycloakClient = null;
+        auth = null;
+        okHttpClient = null;
+        objectMapper = null;
+        props = null;
+        mongoDatabase = null;
+        mongoSpotsDao = null;
+        spotsRepository = null;
+        spotsService = null;
+    }
+
     public static SpotsService spotsService() {
         if (spotsService == null) {
             spotsService = new SpotsService(spotsRepository());
