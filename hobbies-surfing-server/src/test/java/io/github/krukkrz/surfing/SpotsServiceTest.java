@@ -38,6 +38,20 @@ public class SpotsServiceTest {
     }
 
     @Test
+    public void update_updatesSpotAndReturnsItConvertedToDto() {
+        //GIVEN
+        var spotDto = generateSpotDto();
+        var spot = generateSpot();
+        when(repository.update(spot)).thenReturn(spot);
+
+        //WHEN
+        var updated = service.update(spotDto);
+
+        //THEN
+        assertSpotDtoEqualsSpot(updated, spot);
+    }
+
+    @Test
     public void findByRef_returnsDtoSpotsFromRepository() {
         //GIVEN
         var ref = "ref";

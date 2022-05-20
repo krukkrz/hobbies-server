@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.bson.types.ObjectId;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -20,6 +21,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class Spot {
+    private ObjectId id;
     private UUID ref;
     private String name;
     private String link;

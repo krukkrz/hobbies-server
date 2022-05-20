@@ -1,6 +1,6 @@
 package io.github.krukkrz.surfing;
 
-import io.github.krukkrz.common.dao.Dao;
+import io.github.krukkrz.application.database.dao.Dao;
 import io.github.krukkrz.common.exceptions.MultipleEntitiesFound;
 import io.github.krukkrz.surfing.model.Spot;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,8 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static io.github.krukkrz.utils.SpotGenerator.generateSpot;
 import static io.github.krukkrz.utils.SpotGenerator.generateSpots;
@@ -108,5 +108,20 @@ public class SpotsRepositoryTest {
 
         //WHEN //THEN
         assertThrows(MultipleEntitiesFound.class, () -> spotsRepository.findByRef(ref));
+    }
+
+    @Test
+    public void update_callsDaoToUpdateSpotAndReturnsUpdatedOne() {
+        //GIVEN
+        var ref = UUID.randomUUID();
+        var spot = generateSpot();
+        spot.setRef(ref);
+        when(dao.update(spot)).thenReturn(spot);
+
+        //WHEN
+        var actual = spotsRepository.update(spot);
+
+        //THEN
+        assertEquals(actual, spot);
     }
 }

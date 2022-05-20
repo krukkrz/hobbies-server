@@ -16,6 +16,7 @@ import static io.javalin.Javalin.create;
 import static io.javalin.apibuilder.ApiBuilder.get;
 import static io.javalin.apibuilder.ApiBuilder.path;
 import static io.javalin.apibuilder.ApiBuilder.post;
+import static io.javalin.apibuilder.ApiBuilder.put;
 
 @Slf4j
 public class App {
@@ -36,6 +37,7 @@ public class App {
                         get(SpotsHandler::handleReadAll, REGULAR_USER);
                         get("/{ref}", SpotsHandler::handleReadByRef, REGULAR_USER);
                         post(SpotsHandler::handleCreate, REGULAR_USER);
+                        put(SpotsHandler::handleUpdate, REGULAR_USER);
                     });
                 })
                 .exception(UnauthorizedException.class, ExceptionHandler::handleUnauthorizedException)

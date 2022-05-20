@@ -1,4 +1,4 @@
-package io.github.krukkrz.common.dao.keycloak;
+package io.github.krukkrz.application.database.dao.keycloak;
 
 import java.util.List;
 

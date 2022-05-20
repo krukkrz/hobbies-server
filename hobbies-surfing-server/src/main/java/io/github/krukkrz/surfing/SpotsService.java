@@ -9,6 +9,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static io.github.krukkrz.surfing.dto.SpotDto.toEntity;
+import static io.github.krukkrz.surfing.model.Spot.toDto;
 
 public class SpotsService {
 
@@ -35,5 +36,9 @@ public class SpotsService {
         return repository.findByRef(ref)
             .map(Spot::toDto)
             .orElseThrow(() -> new NoSuchElementException("Spot not found"));
+    }
+
+    public SpotDto update(SpotDto spot) {
+        return toDto(repository.update(toEntity(spot)));
     }
 }

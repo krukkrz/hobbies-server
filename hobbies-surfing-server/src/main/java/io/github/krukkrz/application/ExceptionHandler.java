@@ -16,4 +16,9 @@ public class ExceptionHandler {
         ctx.status(404);
         ctx.json(new ErrorResponse(e.getMessage()));
     }
+
+    public static void handleRuntimeException(RuntimeException e, Context ctx) {
+        ctx.status(500);
+        ctx.json(new ErrorResponse(e.getMessage()));
+    }
 }

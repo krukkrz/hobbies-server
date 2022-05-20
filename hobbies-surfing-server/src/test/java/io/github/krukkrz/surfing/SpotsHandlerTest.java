@@ -47,6 +47,21 @@ public class SpotsHandlerTest {
     }
 
     @Test
+    public void handleUpdate_savesUpdatedSpot() throws JsonProcessingException {
+        //GIVEN
+        var spot = generateSpotDto();
+        when(service.update(spot)).thenReturn(spot);
+        when(ctx.body()).thenReturn(objectMapper.writeValueAsString(spot));
+
+        //WHEN
+        SpotsHandler.handleUpdate(ctx);
+
+        //THEN
+        verify(ctx).status(204);
+        verify(ctx).json(spot);
+    }
+
+    @Test
     public void handleReadByRef_fetchSpotByRefFromServiceAndReturnsIt() {
         //GIVEN
         var spot = generateSpotDto();

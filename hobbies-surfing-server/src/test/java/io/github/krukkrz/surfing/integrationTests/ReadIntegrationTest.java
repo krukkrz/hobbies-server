@@ -46,8 +46,8 @@ public class ReadIntegrationTest extends AbstractIntegrationTest{
             var response = client.get("/spots/"+ref, authorizationHeaders);
 
             //THEN
-            var savedSpot = objectMapper().readValue(response.body().string(), Spot.class);
-            assertEquals(savedSpot.getRef(), ref);
+            var spotByRef = objectMapper().readValue(response.body().string(), Spot.class);
+            assertEquals(spotByRef.getRef(), ref);
         }));
     }
 }

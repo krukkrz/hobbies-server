@@ -11,9 +11,9 @@ import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
 import io.github.krukkrz.App;
 import io.github.krukkrz.auth.UnauthorizedException;
-import io.github.krukkrz.common.dao.keycloak.KeycloakClient;
-import io.github.krukkrz.common.dao.keycloak.RealmAccess;
-import io.github.krukkrz.common.dao.keycloak.UserInfo;
+import io.github.krukkrz.application.database.dao.keycloak.KeycloakClient;
+import io.github.krukkrz.application.database.dao.keycloak.RealmAccess;
+import io.github.krukkrz.application.database.dao.keycloak.UserInfo;
 import io.javalin.Javalin;
 import okhttp3.Request;
 import org.junit.jupiter.api.AfterEach;
@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 
 import static io.github.krukkrz.application.context.ApplicationContext.clearContext;
 import static io.github.krukkrz.application.context.ApplicationContext.runTestMode;
-import static io.github.krukkrz.application.context.ApplicationContext.useEmbeddedMongodb;
+import static io.github.krukkrz.application.context.ApplicationContext.setMongoDatabase;
 import static io.github.krukkrz.application.context.ApplicationContext.useMockedKeycloakClient;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -60,7 +60,7 @@ public abstract class AbstractIntegrationTest {
         this.mongo = new MongoClient(bindIp, port);
 
         MongoDatabase db = mongo.getDatabase(DATABASE_NAME);
-        useEmbeddedMongodb(db);
+        setMongoDatabase(db);
         mockedKeycloakClient = mock(KeycloakClient.class);
         useMockedKeycloakClient(mockedKeycloakClient);
         app = App.getApp();

@@ -31,4 +31,11 @@ public class SpotsHandler {
         ctx.json(spot);
         ctx.status(200);
     }
+
+    public static void handleUpdate(Context ctx) throws JsonProcessingException {
+        var spotDto = objectMapper().readValue(ctx.body(), SpotDto.class);
+        var updated = spotsService().update(spotDto);
+        ctx.json(updated);
+        ctx.status(204);
+    }
 }

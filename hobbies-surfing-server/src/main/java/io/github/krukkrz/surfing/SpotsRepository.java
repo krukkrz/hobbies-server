@@ -1,6 +1,6 @@
 package io.github.krukkrz.surfing;
 
-import io.github.krukkrz.common.dao.Dao;
+import io.github.krukkrz.application.database.dao.Dao;
 import io.github.krukkrz.surfing.model.Spot;
 
 import java.util.List;
@@ -24,5 +24,9 @@ public class SpotsRepository {
 
     public Optional<Spot> findByRef(String ref) {
         return dao.findByRef(ref);
+    }
+
+    public Spot update(Spot spot) {
+        return dao.update(spot);
     }
 }

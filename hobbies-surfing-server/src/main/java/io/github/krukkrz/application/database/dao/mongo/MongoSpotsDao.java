@@ -1,12 +1,15 @@
-package io.github.krukkrz.common.dao.mongo;
+package io.github.krukkrz.application.database.dao.mongo;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-import io.github.krukkrz.common.dao.Dao;
+import com.mongodb.client.model.ReplaceOptions;
+import io.github.krukkrz.application.database.dao.Dao;
 import io.github.krukkrz.common.exceptions.MultipleEntitiesFound;
 import io.github.krukkrz.surfing.model.Spot;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +19,7 @@ import static com.mongodb.client.model.Filters.eq;
 import static io.github.krukkrz.application.context.ApplicationContext.mongoDatabase;
 import static io.github.krukkrz.application.context.ApplicationContext.objectMapper;
 
+@Slf4j
 public class MongoSpotsDao implements Dao<Spot> {
 
     private final MongoCollection<Document> collection;
@@ -26,15 +30,7 @@ public class MongoSpotsDao implements Dao<Spot> {
 
     @Override
     public void save(Spot spot) {
-        Document document = new Document();
-        document.put("name", spot.getName());
-        document.put("ref", spot.getRef().toString());
-        document.put("country", spot.getCountry());
-        document.put("link", spot.getLink());
-        document.put("coolness", spot.getCoolness().name());
-        document.put("startDate", spot.getStartDate().toString());
-        document.put("endDate", spot.getEndDate().toString());
-        document.put("surfingType", spot.getSurfingType().name());
+        Document document = spotToDocument(spot);
         collection.insertOne(document);
     }
 
@@ -57,8 +53,26 @@ public class MongoSpotsDao implements Dao<Spot> {
             documents.add(cursor.next());
         }
         cursor.close();
-        if (documents.size() > 1) throw new MultipleEntitiesFound();
+        if (documents.size() > 1) {
+            throw new MultipleEntitiesFound();
+        }
         return documents.stream().map(this::toSpot).findAny();
+    }
+
+    @Override
+    public Spot update(Spot spot) {
+        var ref = String.valueOf(spot.getRef());
+        var existingSpot = findByRef(ref);
+        existingSpot.ifPresent(s -> spot.setId(s.getId()));
+
+        var result = collection.replaceOne(eq("ref", spot.getRef()), spotToDocument(spot), getOpts());
+        log.info("Updated {} documents", result.getMatchedCount());
+        return findByRef(ref).get();
+    }
+
+    @NotNull
+    private ReplaceOptions getOpts() {
+        return new ReplaceOptions().upsert(true);
     }
 
     private Spot toSpot(Document document) {
@@ -68,5 +82,19 @@ public class MongoSpotsDao implements Dao<Spot> {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+    }
+
+    @NotNull
+    private Document spotToDocument(Spot spot) {
+        Document document = new Document();
+        document.put("name", spot.getName());
+        document.put("ref", spot.getRef().toString());
+        document.put("country", spot.getCountry());
+        document.put("link", spot.getLink());
+        document.put("coolness", spot.getCoolness().name());
+        document.put("startDate", spot.getStartDate().toString());
+        document.put("endDate", spot.getEndDate().toString());
+        document.put("surfingType", spot.getSurfingType().name());
+        return document;
     }
 }

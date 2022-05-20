@@ -6,8 +6,8 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import io.github.krukkrz.auth.Auth;
-import io.github.krukkrz.common.dao.keycloak.KeycloakClient;
-import io.github.krukkrz.common.dao.mongo.MongoSpotsDao;
+import io.github.krukkrz.application.database.dao.keycloak.KeycloakClient;
+import io.github.krukkrz.application.database.dao.mongo.MongoSpotsDao;
 import io.github.krukkrz.surfing.SpotsRepository;
 import io.github.krukkrz.surfing.SpotsService;
 import lombok.extern.slf4j.Slf4j;
@@ -71,7 +71,7 @@ public class ApplicationContext {
         return mongoSpotsDao;
     }
 
-    public static void useEmbeddedMongodb(MongoDatabase db) {
+    public static void setMongoDatabase(MongoDatabase db) {
         mongoDatabase = db;
     }
 

@@ -41,8 +41,12 @@ public class SpotGenerator {
     }
 
     public static SpotDto generateSpotDto() {
+        return generateSpotDto("spot-name");
+    }
+
+    public static SpotDto generateSpotDto(String name) {
         return SpotDto.builder()
-            .name("spot-name")
+            .name(name)
             .ref(uuid)
             .link("thisislink.com")
             .country("Spain")

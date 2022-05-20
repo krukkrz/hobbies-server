@@ -1,8 +1,8 @@
 package io.github.krukkrz.auth;
 
-import io.github.krukkrz.common.dao.keycloak.KeycloakClient;
-import io.github.krukkrz.common.dao.keycloak.RealmAccess;
-import io.github.krukkrz.common.dao.keycloak.UserInfo;
+import io.github.krukkrz.application.database.dao.keycloak.KeycloakClient;
+import io.github.krukkrz.application.database.dao.keycloak.RealmAccess;
+import io.github.krukkrz.application.database.dao.keycloak.UserInfo;
 import io.javalin.http.Context;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
