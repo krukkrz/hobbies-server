@@ -1,7 +1,5 @@
 package io.github.krukkrz.surfing.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.github.krukkrz.surfing.dto.SpotDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +19,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class Spot {
-    private ObjectId id;
+    private ObjectId _id;
     private UUID ref;
     private String name;
     private String link;

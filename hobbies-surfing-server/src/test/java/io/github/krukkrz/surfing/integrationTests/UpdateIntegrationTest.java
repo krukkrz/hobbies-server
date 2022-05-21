@@ -9,6 +9,7 @@ import static io.github.krukkrz.application.context.ApplicationContext.mongoSpot
 import static io.github.krukkrz.application.context.ApplicationContext.objectMapper;
 import static io.github.krukkrz.utils.SpotGenerator.generateSpot;
 import static io.github.krukkrz.utils.SpotGenerator.generateSpotDto;
+import static io.github.krukkrz.utils.SpotGenerator.generateSpotWithId;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -30,11 +31,11 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
 
             //WHEN
             var response = client.put("/spots", json, authorizationHeaders);
-            var updated = objectMapper().readValue(response.body().string(), SpotDto.class);
+            var updated = response.body().string();
 
             //THEN
-            assertEquals(response.code(), 204);
-            assertEquals(updated, spotDto);
+            assertEquals(response.code(), 200);
+            assertEquals(json, updated);
         });
     }
 
@@ -50,7 +51,7 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
             var updated = objectMapper().readValue(response.body().string(), SpotDto.class);
 
             //THEN
-            assertEquals(response.code(), 204);
+            assertEquals(200, response.code());
             assertEquals(updated, spotDto);
         });
     }
@@ -62,11 +63,12 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
             var spotDto = generateSpotDto("Updated Spot Name");
             var ref = spotDto.ref();
 
-            var spot = generateSpot();
+            var spot = generateSpotWithId();
+            var spot2 = generateSpotWithId();
             spot.setRef(ref);
             spot.setName("Spot Name");
             mongoSpotsDao().save(spot);
-            mongoSpotsDao().save(spot);
+            mongoSpotsDao().save(spot2);
 
             var json = objectMapper().writeValueAsString(spotDto);
 

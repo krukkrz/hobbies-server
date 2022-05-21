@@ -36,6 +36,6 @@ public class SpotsHandler {
         var spotDto = objectMapper().readValue(ctx.body(), SpotDto.class);
         var updated = spotsService().update(spotDto);
         ctx.json(updated);
-        ctx.status(204);
+        ctx.status(200);
     }
 }

@@ -10,6 +10,7 @@ import java.util.UUID;
 import static io.github.krukkrz.application.context.ApplicationContext.mongoSpotsDao;
 import static io.github.krukkrz.application.context.ApplicationContext.objectMapper;
 import static io.github.krukkrz.utils.SpotGenerator.generateSpot;
+import static io.github.krukkrz.utils.SpotGenerator.generateSpotWithId;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ReadIntegrationTest extends AbstractIntegrationTest{
@@ -18,9 +19,10 @@ public class ReadIntegrationTest extends AbstractIntegrationTest{
     public void fetchesAllSpotsFromDb() {
         JavalinTest.test(app, ((server, client) -> {
             //GIVEN
-            var spot = generateSpot();
+            var spot = generateSpotWithId();
+            var spot2 = generateSpotWithId();
             mongoSpotsDao().save(spot);
-            mongoSpotsDao().save(spot);
+            mongoSpotsDao().save(spot2);
 
             //WHEN
             var response = client.get("/spots", authorizationHeaders);
@@ -35,8 +37,8 @@ public class ReadIntegrationTest extends AbstractIntegrationTest{
     public void fetchesSpotByRefFromDb() {
         JavalinTest.test(app, ((server, client) -> {
             //GIVEN
-            var spotToSave = generateSpot();
-            var anotherSpot = generateSpot();
+            var spotToSave = generateSpotWithId();
+            var anotherSpot = generateSpotWithId();
             var ref = UUID.randomUUID();
             mongoSpotsDao().save(anotherSpot);
             spotToSave.setRef(ref);

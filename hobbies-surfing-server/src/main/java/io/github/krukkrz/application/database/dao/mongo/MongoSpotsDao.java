@@ -54,7 +54,7 @@ public class MongoSpotsDao implements Dao<Spot> {
         }
         cursor.close();
         if (documents.size() > 1) {
-            throw new MultipleEntitiesFound();
+            throw new MultipleEntitiesFound("Multiple spots found");
         }
         return documents.stream().map(this::toSpot).findAny();
     }
@@ -63,9 +63,9 @@ public class MongoSpotsDao implements Dao<Spot> {
     public Spot update(Spot spot) {
         var ref = String.valueOf(spot.getRef());
         var existingSpot = findByRef(ref);
-        existingSpot.ifPresent(s -> spot.setId(s.getId()));
+        existingSpot.ifPresent(s -> spot.set_id(s.get_id()));
 
-        var result = collection.replaceOne(eq("ref", spot.getRef()), spotToDocument(spot), getOpts());
+        var result = collection.replaceOne(eq("_id", spot.get_id()), spotToDocument(spot), getOpts());
         log.info("Updated {} documents", result.getMatchedCount());
         return findByRef(ref).get();
     }
@@ -87,6 +87,7 @@ public class MongoSpotsDao implements Dao<Spot> {
     @NotNull
     private Document spotToDocument(Spot spot) {
         Document document = new Document();
+        document.put("_id", spot.get_id());
         document.put("name", spot.getName());
         document.put("ref", spot.getRef().toString());
         document.put("country", spot.getCountry());

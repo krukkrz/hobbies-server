@@ -104,7 +104,7 @@ public class SpotsRepositoryTest {
     public void findByRef_throwsExceptionIfTwoDocumentsWithSameRefFound() {
         //GIVEN
         var ref = "ref";
-        when(dao.findByRef(ref)).thenThrow(new MultipleEntitiesFound());
+        when(dao.findByRef(ref)).thenThrow(new MultipleEntitiesFound("Multiple spots found"));
 
         //WHEN //THEN
         assertThrows(MultipleEntitiesFound.class, () -> spotsRepository.findByRef(ref));

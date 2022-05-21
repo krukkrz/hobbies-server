@@ -41,7 +41,8 @@ public class App {
                     });
                 })
                 .exception(UnauthorizedException.class, ExceptionHandler::handleUnauthorizedException)
-                .exception(NoSuchElementException.class, ExceptionHandler::handleNoSuchElementException);
+                .exception(NoSuchElementException.class, ExceptionHandler::handleNoSuchElementException)
+                .exception(RuntimeException.class, ExceptionHandler::handleRuntimeException);
         return app;
     }
 }

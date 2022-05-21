@@ -11,12 +11,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static io.github.krukkrz.utils.SpotGenerator.generateSpotDto;
 import static io.github.krukkrz.utils.SpotGenerator.generateSpotDtos;
 import static java.util.Collections.emptyList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
@@ -57,7 +55,7 @@ public class SpotsHandlerTest {
         SpotsHandler.handleUpdate(ctx);
 
         //THEN
-        verify(ctx).status(204);
+        verify(ctx).status(200);
         verify(ctx).json(spot);
     }
 

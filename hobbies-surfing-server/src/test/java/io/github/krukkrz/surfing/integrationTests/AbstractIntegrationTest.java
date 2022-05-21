@@ -49,7 +49,7 @@ public abstract class AbstractIntegrationTest {
         runTestMode();
 
         String bindIp = "localhost";
-        int port = Network.getFreeServerPort();
+        int port = 12345;
         MongodConfig mongodConfig = MongodConfig.builder()
                 .version(Version.Main.PRODUCTION)
                 .net(new Net(bindIp, port, Network.localhostIsIPv6()))
@@ -80,5 +80,6 @@ public abstract class AbstractIntegrationTest {
 
     protected Consumer<Request.Builder> authorizationHeaders = r -> {
         r.addHeader("Authorization", "Bearer token");
+        r.addHeader("Content-type", "application/json");
     };
 }
