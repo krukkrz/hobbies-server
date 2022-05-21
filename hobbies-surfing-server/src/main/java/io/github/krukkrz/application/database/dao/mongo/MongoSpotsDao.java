@@ -1,15 +1,18 @@
 package io.github.krukkrz.application.database.dao.mongo;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.ReplaceOptions;
-import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.model.Updates;
 import io.github.krukkrz.application.database.dao.Dao;
 import io.github.krukkrz.common.exceptions.MultipleEntitiesFound;
 import io.github.krukkrz.surfing.model.Spot;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -17,6 +20,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Updates.*;
+import static com.mongodb.client.model.Updates.set;
 import static io.github.krukkrz.application.context.ApplicationContext.mongoDatabase;
 import static io.github.krukkrz.application.context.ApplicationContext.objectMapper;
 
@@ -31,6 +36,9 @@ public class MongoSpotsDao implements Dao<Spot> {
 
     @Override
     public void save(Spot spot) {
+        if (spot.get_id() == null) {
+            spot.set_id(new ObjectId());
+        }
         Document document = spotToDocument(spot);
         collection.insertOne(document);
     }
@@ -66,8 +74,25 @@ public class MongoSpotsDao implements Dao<Spot> {
         var existingSpot = findByRef(ref);
         existingSpot.ifPresent(s -> spot.set_id(s.get_id()));
 
-        var result = collection.replaceOne(eq("_id", spot.get_id()), spotToDocument(spot), getOpts());
-        log.info("Updated {} documents", result.getMatchedCount());
+        var updates = combine(
+                set("name", spot.getName()),
+                set("ref", spot.getRef().toString()),
+                set("country", spot.getCountry()),
+                set("link", spot.getLink()),
+                set("coolness", spot.getCoolness().name()),
+                set("startDate", spot.getStartDate().toString()),
+                set("endDate", spot.getEndDate().toString()),
+                set("surfingType", spot.getSurfingType().name())
+        );
+
+        var spotId = Optional.ofNullable(spot.get_id());
+        var filter = eq("_id", spotId.orElse(new ObjectId()).toString() );
+        try {
+            var result = collection.updateOne(filter, updates, getUpsertOptions());
+            log.info("Updated {} documents", result.getMatchedCount());
+        } catch (MongoException e) {
+            log.error(e.getMessage());
+        }
         return findByRef(ref).get();
     }
 
@@ -78,8 +103,8 @@ public class MongoSpotsDao implements Dao<Spot> {
     }
 
     @NotNull
-    private ReplaceOptions getOpts() {
-        return new ReplaceOptions().upsert(true);
+    private UpdateOptions getUpsertOptions() {
+        return new UpdateOptions().upsert(true);
     }
 
     private Spot toSpot(Document document) {
@@ -94,7 +119,7 @@ public class MongoSpotsDao implements Dao<Spot> {
     @NotNull
     private Document spotToDocument(Spot spot) {
         Document document = new Document();
-        document.put("_id", spot.get_id());
+        document.put("_id", spot.get_id().toString());
         document.put("name", spot.getName());
         document.put("ref", spot.getRef().toString());
         document.put("country", spot.getCountry());

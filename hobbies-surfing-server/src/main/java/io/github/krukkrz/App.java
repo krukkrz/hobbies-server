@@ -3,6 +3,7 @@ package io.github.krukkrz;
 import io.github.krukkrz.application.ExceptionHandler;
 import io.github.krukkrz.auth.UnauthorizedException;
 import io.github.krukkrz.common.ErrorResponse;
+import io.github.krukkrz.common.exceptions.MultipleEntitiesFound;
 import io.github.krukkrz.surfing.SpotsHandler;
 import io.javalin.Javalin;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,7 @@ public class App {
                 })
                 .exception(UnauthorizedException.class, ExceptionHandler::handleUnauthorizedException)
                 .exception(NoSuchElementException.class, ExceptionHandler::handleNoSuchElementException)
+                .exception(MultipleEntitiesFound.class, ExceptionHandler::handleMultipleEntitiesException)
                 .exception(RuntimeException.class, ExceptionHandler::handleRuntimeException);
         return app;
     }

@@ -9,12 +9,13 @@ services:
       image: postgres
       volumes:
         - postgres_data:/var/lib/postgresql/data
+        - ./postgres:/docker-entrypoint-initdb.d
       environment:
         POSTGRES_DB: keycloak
         POSTGRES_USER: keycloak
         POSTGRES_PASSWORD: password
   keycloak:
-      image: quay.io/keycloak/keycloak:legacy
+      image: sleighzy/keycloak
       environment:
         DB_VENDOR: POSTGRES
         DB_ADDR: postgres
@@ -31,11 +32,12 @@ services:
       depends_on:
         - postgres
   mongodb:
-    image: mongo:5.0
+    image: mongo:4.4.14
+    command: mongod --dbpath /data/db
     ports:
       - 27017:27017
     volumes:
-      - ~/apps/mongo:/data/db
+      - ./data/mongodb:/data/db
     environment:
       - MONGO_INITDB_ROOT_USERNAME=mongouser
       - MONGO_INITDB_ROOT_PASSWORD=mongopass
