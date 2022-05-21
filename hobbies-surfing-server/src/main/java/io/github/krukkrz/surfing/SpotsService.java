@@ -41,4 +41,8 @@ public class SpotsService {
     public SpotDto update(SpotDto spot) {
         return toDto(repository.update(toEntity(spot)));
     }
+
+    public void delete(UUID ref) {
+        repository.delete(ref);
+    }
 }

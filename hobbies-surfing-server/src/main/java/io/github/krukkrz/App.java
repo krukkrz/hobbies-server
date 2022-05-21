@@ -13,6 +13,7 @@ import static io.github.krukkrz.application.Config.appConfig;
 import static io.github.krukkrz.application.ExceptionHandler.handleUnauthorizedException;
 import static io.github.krukkrz.auth.Role.REGULAR_USER;
 import static io.javalin.Javalin.create;
+import static io.javalin.apibuilder.ApiBuilder.delete;
 import static io.javalin.apibuilder.ApiBuilder.get;
 import static io.javalin.apibuilder.ApiBuilder.path;
 import static io.javalin.apibuilder.ApiBuilder.post;
@@ -30,14 +31,12 @@ public class App {
     public static Javalin getApp() {
         app = create(appConfig)
                 .routes(() -> {
-                    path("hello", () -> {
-                        get(ctx -> ctx.result("hello world!"), REGULAR_USER);
-                    });
                     path("spots", () -> {
                         get(SpotsHandler::handleReadAll, REGULAR_USER);
                         get("/{ref}", SpotsHandler::handleReadByRef, REGULAR_USER);
                         post(SpotsHandler::handleCreate, REGULAR_USER);
                         put(SpotsHandler::handleUpdate, REGULAR_USER);
+                        delete("/{ref}", SpotsHandler::handleDelete, REGULAR_USER);
                     });
                 })
                 .exception(UnauthorizedException.class, ExceptionHandler::handleUnauthorizedException)

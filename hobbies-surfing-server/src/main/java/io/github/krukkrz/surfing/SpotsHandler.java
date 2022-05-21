@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.krukkrz.surfing.dto.SpotDto;
 import io.javalin.http.Context;
 
+import java.util.UUID;
+
 import static io.github.krukkrz.application.context.ApplicationContext.objectMapper;
 import static io.github.krukkrz.application.context.ApplicationContext.spotsService;
 
@@ -37,5 +39,11 @@ public class SpotsHandler {
         var updated = spotsService().update(spotDto);
         ctx.json(updated);
         ctx.status(200);
+    }
+
+    public static void handleDelete(Context ctx) {
+        var ref = UUID.fromString(ctx.pathParam("ref"));
+        spotsService().delete(ref);
+        ctx.status(204);
     }
 }

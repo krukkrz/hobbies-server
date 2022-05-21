@@ -5,6 +5,7 @@ import io.github.krukkrz.surfing.model.Spot;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class SpotsRepository {
 
@@ -28,5 +29,9 @@ public class SpotsRepository {
 
     public Spot update(Spot spot) {
         return dao.update(spot);
+    }
+
+    public void delete(UUID ref) {
+        dao.delete(ref.toString());
     }
 }

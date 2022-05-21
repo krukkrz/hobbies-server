@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.ReplaceOptions;
+import com.mongodb.client.result.DeleteResult;
 import io.github.krukkrz.application.database.dao.Dao;
 import io.github.krukkrz.common.exceptions.MultipleEntitiesFound;
 import io.github.krukkrz.surfing.model.Spot;
@@ -68,6 +69,12 @@ public class MongoSpotsDao implements Dao<Spot> {
         var result = collection.replaceOne(eq("_id", spot.get_id()), spotToDocument(spot), getOpts());
         log.info("Updated {} documents", result.getMatchedCount());
         return findByRef(ref).get();
+    }
+
+    @Override
+    public void delete(String ref) {
+        var deleteResult = collection.deleteOne(eq("ref", ref));
+        log.info("Removed {} documents", deleteResult.getDeletedCount());
     }
 
     @NotNull

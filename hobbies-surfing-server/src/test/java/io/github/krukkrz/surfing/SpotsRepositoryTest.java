@@ -124,4 +124,16 @@ public class SpotsRepositoryTest {
         //THEN
         assertEquals(actual, spot);
     }
+
+    @Test
+    public void delete_callsDaoToRemoveSpot() {
+        //GIVEN
+        var ref = UUID.randomUUID();
+
+        //WHEN
+        spotsRepository.delete(ref);
+
+        //THEN
+        verify(dao).delete(ref.toString());
+    }
 }

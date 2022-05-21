@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.UUID;
 
 import static io.github.krukkrz.utils.SpotGenerator.generateSpot;
 import static io.github.krukkrz.utils.SpotGenerator.generateSpotDto;
@@ -35,6 +36,18 @@ public class SpotsServiceTest {
     @BeforeEach
     public void setup() {
         service = new SpotsService(repository);
+    }
+
+    @Test
+    public void delete_removesSpot() {
+        //GIVEN
+        var ref = UUID.randomUUID();
+
+        //WHEN
+        service.delete(ref);
+
+        //THEN
+        verify(repository).delete(ref);
     }
 
     @Test

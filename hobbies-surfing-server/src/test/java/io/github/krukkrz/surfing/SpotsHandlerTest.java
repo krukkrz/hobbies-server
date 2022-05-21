@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 import java.util.List;
+import java.util.UUID;
 
 import static io.github.krukkrz.utils.SpotGenerator.generateSpotDto;
 import static io.github.krukkrz.utils.SpotGenerator.generateSpotDtos;
@@ -42,6 +43,20 @@ public class SpotsHandlerTest {
     @AfterEach
     public void after() {
         mockedApplicationContext.close();
+    }
+
+    @Test
+    public void handleDelete_removesSpotByRef() {
+        //GIVEN
+        var ref = UUID.randomUUID();
+        when(ctx.pathParam("ref")).thenReturn(ref.toString());
+
+        //WHEN
+        SpotsHandler.handleDelete(ctx);
+
+        //THEN
+        verify(service).delete(ref);
+        verify(ctx).status(204);
     }
 
     @Test
