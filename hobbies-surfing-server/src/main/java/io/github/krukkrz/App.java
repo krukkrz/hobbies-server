@@ -3,6 +3,7 @@ package io.github.krukkrz;
 import io.github.krukkrz.application.ExceptionHandler;
 import io.github.krukkrz.auth.UnauthorizedException;
 import io.github.krukkrz.common.ErrorResponse;
+import io.github.krukkrz.common.exceptions.ForbiddenException;
 import io.github.krukkrz.common.exceptions.MultipleEntitiesFound;
 import io.github.krukkrz.surfing.SpotsHandler;
 import io.javalin.Javalin;
@@ -11,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.NoSuchElementException;
 
 import static io.github.krukkrz.application.Config.appConfig;
-import static io.github.krukkrz.application.ExceptionHandler.handleUnauthorizedException;
 import static io.github.krukkrz.auth.Role.REGULAR_USER;
 import static io.javalin.Javalin.create;
 import static io.javalin.apibuilder.ApiBuilder.delete;
@@ -43,6 +43,7 @@ public class App {
                 .exception(UnauthorizedException.class, ExceptionHandler::handleUnauthorizedException)
                 .exception(NoSuchElementException.class, ExceptionHandler::handleNoSuchElementException)
                 .exception(MultipleEntitiesFound.class, ExceptionHandler::handleMultipleEntitiesException)
+                .exception(ForbiddenException.class, ExceptionHandler::handleForbiddenException)
                 .exception(RuntimeException.class, ExceptionHandler::handleRuntimeException);
         return app;
     }

@@ -33,10 +33,8 @@ public class AuthTest {
     }
 
     @Test
-    public void getRoles_returnsRoles() throws UnauthorizedException {
+    public void getRoles_returnsRoles() {
         //GIVEN
-        var bearerToken = "Bearer token";
-        var token = "token";
         var userInfo = new UserInfo(
             "sub",
             true,
@@ -44,10 +42,9 @@ public class AuthTest {
             new RealmAccess(List.of("regular_user"))
         );
 
-        when(keycloakClient.getUserInfo(token)).thenReturn(userInfo);
 
         //WHEN
-        var userRoles = auth.getUserRoles(bearerToken);
+        var userRoles = auth.getUserRoles(userInfo);
 
         //THEN
         assertTrue(userRoles.contains(REGULAR_USER));

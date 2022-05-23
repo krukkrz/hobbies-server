@@ -2,6 +2,7 @@ package io.github.krukkrz.surfing.integrationTests;
 
 import io.github.krukkrz.common.ErrorResponse;
 import io.github.krukkrz.surfing.dto.SpotDto;
+import io.github.krukkrz.utils.AbstractIntegrationTest;
 import io.javalin.testtools.JavalinTest;
 import org.junit.jupiter.api.Test;
 
@@ -19,18 +20,19 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
     public void updatesSpotExistingInDb() {
         JavalinTest.test(app, (server, client) -> {
             //GIVEN
+            var token = actAsDefaultUser();
             var spotDto = generateSpotDto("Updated Spot Name");
             var ref = spotDto.ref();
 
             var spot = generateSpot();
             spot.setRef(ref);
             spot.setName("Spot Name");
-            mongoSpotsDao().save(spot);
+            mongoSpotsDao().save(spot, null);
 
             var json = objectMapper().writeValueAsString(spotDto);
 
             //WHEN
-            var response = client.put("/spots", json, authorizationHeaders);
+            var response = client.put("/spots", json, r -> authorizationHeaders(r, token));
             var updated = response.body().string();
 
             //THEN
@@ -43,11 +45,12 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
     public void createsNewSpotIfNoneFoundInDbForGivenRef() {
         JavalinTest.test(app, (server, client) -> {
             //GIVEN
+            var token = actAsDefaultUser();
             var spotDto = generateSpotDto("Updated Spot Name");
             var json = objectMapper().writeValueAsString(spotDto);
 
             //WHEN
-            var response = client.put("/spots", json, authorizationHeaders);
+            var response = client.put("/spots", json, r -> authorizationHeaders(r, token));
             var updated = objectMapper().readValue(response.body().string(), SpotDto.class);
 
             //THEN
@@ -60,6 +63,7 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
     public void returnsServerErrorWhenMultipleSpotsFoundForTheSameRef() {
         JavalinTest.test(app, (server, client) -> {
             //GIVEN
+            var token = actAsDefaultUser();
             var spotDto = generateSpotDto("Updated Spot Name");
             var ref = spotDto.ref();
 
@@ -67,13 +71,13 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
             var spot2 = generateSpotWithId();
             spot.setRef(ref);
             spot.setName("Spot Name");
-            mongoSpotsDao().save(spot);
-            mongoSpotsDao().save(spot2);
+            mongoSpotsDao().save(spot, null);
+            mongoSpotsDao().save(spot2, null);
 
             var json = objectMapper().writeValueAsString(spotDto);
 
             //WHEN
-            var response = client.put("/spots", json, authorizationHeaders);
+            var response = client.put("/spots", json, r -> authorizationHeaders(r, token));
             var error = objectMapper().readValue(response.body().string(), ErrorResponse.class);
 
             //THEN

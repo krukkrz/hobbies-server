@@ -2,6 +2,7 @@ package io.github.krukkrz.application;
 
 import io.github.krukkrz.auth.UnauthorizedException;
 import io.github.krukkrz.common.ErrorResponse;
+import io.github.krukkrz.common.exceptions.ForbiddenException;
 import io.github.krukkrz.common.exceptions.MultipleEntitiesFound;
 import io.javalin.http.Context;
 
@@ -25,5 +26,9 @@ public class ExceptionHandler {
 
     public static void handleRuntimeException(RuntimeException e, Context ctx) {
         ctx.status(500);
+    }
+
+    public static void handleForbiddenException(ForbiddenException e, Context ctx) {
+        ctx.status(403);
     }
 }

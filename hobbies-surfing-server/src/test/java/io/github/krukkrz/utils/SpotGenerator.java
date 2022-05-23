@@ -29,17 +29,22 @@ public class SpotGenerator {
         );
     }
 
-    public static Spot generateSpotWithId(){
-        return generateSpot(new ObjectId());
+    public static Spot generateSpotWithIdForUser(String token) {
+        return generateSpot(new ObjectId(), token);
+    }
+
+    public static Spot generateSpotWithId() {
+        return generateSpot(new ObjectId(), null);
     }
 
     public static Spot generateSpot() {
-        return generateSpot(null);
+        return generateSpot(null, null);
     }
 
-    public static Spot generateSpot(ObjectId id) {
+    public static Spot generateSpot(ObjectId id, String userId) {
         return Spot.builder()
                 ._id(id)
+                .userId("user-" + userId)
                 .name("spot-name")
                 .ref(uuid)
                 .link("thisislink.com")

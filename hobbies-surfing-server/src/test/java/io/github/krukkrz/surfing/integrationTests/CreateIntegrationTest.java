@@ -1,5 +1,6 @@
 package io.github.krukkrz.surfing.integrationTests;
 
+import io.github.krukkrz.utils.AbstractIntegrationTest;
 import io.javalin.testtools.JavalinTest;
 import org.junit.jupiter.api.Test;
 
@@ -15,17 +16,18 @@ public class CreateIntegrationTest extends AbstractIntegrationTest {
     public void savesSpotInDatabase() {
         JavalinTest.test(app, (server, client) -> {
             //GIVEN
+            var token = actAsDefaultUser();
             var spotDto = generateSpotDto();
             var json = objectMapper().writeValueAsString(spotDto);
 
             //WHEN
-            var response = client.post("/spots", json, authorizationHeaders);
+            var response = client.post("/spots", json, r -> authorizationHeaders(r, token));
 
             //THEN
             assertEquals(response.code(), 201);
             response.close();
 
-            assertTrue(mongoSpotsDao().findAll().stream().anyMatch(
+            assertTrue(mongoSpotsDao().findAll("user-" + token).stream().anyMatch(
                     spot -> spot.getRef() != null
                             && spot.getCountry().equals(spotDto.country())
                             && spot.getCoolness().equals(spotDto.coolness())

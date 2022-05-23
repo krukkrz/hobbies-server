@@ -55,7 +55,7 @@ public class SpotsHandlerTest {
         SpotsHandler.handleDelete(ctx);
 
         //THEN
-        verify(service).delete(ref);
+        verify(service).delete(ref, null);
         verify(ctx).status(204);
     }
 
@@ -63,7 +63,7 @@ public class SpotsHandlerTest {
     public void handleUpdate_savesUpdatedSpot() throws JsonProcessingException {
         //GIVEN
         var spot = generateSpotDto();
-        when(service.update(spot)).thenReturn(spot);
+        when(service.update(spot, null)).thenReturn(spot);
         when(ctx.body()).thenReturn(objectMapper.writeValueAsString(spot));
 
         //WHEN
@@ -80,7 +80,7 @@ public class SpotsHandlerTest {
         var spot = generateSpotDto();
         var ref = "ref";
         when(ctx.pathParam("ref")).thenReturn(ref);
-        when(service.findByRef(ref)).thenReturn(spot);
+        when(service.findByRef(ref, null)).thenReturn(spot);
 
         //WHEN
         SpotsHandler.handleReadByRef(ctx);
@@ -94,7 +94,7 @@ public class SpotsHandlerTest {
     public void handleReadAll_fetchAllSpotsFromService() {
         //GIVEN
         var spots = generateSpotDtos();
-        when(service.findAll()).thenReturn(spots);
+        when(service.findAll(null)).thenReturn(spots);
 
         //WHEN
         SpotsHandler.handleReadAll(ctx);
@@ -108,7 +108,7 @@ public class SpotsHandlerTest {
     public void handleReadAll_returnsEmptyListIfNoObjectsInDb() {
         //GIVEN
         List<SpotDto> spots = emptyList();
-        when(service.findAll()).thenReturn(spots);
+        when(service.findAll(null)).thenReturn(spots);
 
         //WHEN
         SpotsHandler.handleReadAll(ctx);
@@ -129,7 +129,7 @@ public class SpotsHandlerTest {
         SpotsHandler.handleCreate(ctx);
 
         //THEN
-        verify(service).create(spotDto);
+        verify(service).create(spotDto, null);
         verify(ctx).status(201);
     }
 }

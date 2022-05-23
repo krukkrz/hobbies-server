@@ -41,20 +41,20 @@ public class SpotsRepositoryTest {
         var spot = generateSpot();
 
         //WHEN
-        spotsRepository.save(spot);
+        spotsRepository.save(spot, null);
 
         //THEN
-        verify(dao).save(spot);
+        verify(dao).save(spot, null);
     }
 
     @Test
     public void findAll_returnsAllSavedSurfSpots() {
         //GIVEN
         var spots = generateSpots();
-        when(dao.findAll()).thenReturn(spots);
+        when(dao.findAll(null)).thenReturn(spots);
 
         //WHEN
-        var actual = spotsRepository.findAll();
+        var actual = spotsRepository.findAll(null);
 
         //THEN
         assertEquals(actual, spots);
@@ -63,10 +63,10 @@ public class SpotsRepositoryTest {
     @Test
     public void findAll_returnsEmptyListIfNoSpotsSaved() {
         //GIVEN
-        when(dao.findAll()).thenReturn(emptyList());
+        when(dao.findAll(null)).thenReturn(emptyList());
 
         //WHEN
-        var actual = spotsRepository.findAll();
+        var actual = spotsRepository.findAll(null);
 
         //THEN
         assertTrue(actual.isEmpty());
@@ -77,10 +77,10 @@ public class SpotsRepositoryTest {
         //GIVEN
         var ref = "ref";
         var spot = generateSpot();
-        when(dao.findByRef(ref)).thenReturn(Optional.of(spot));
+        when(dao.findByRef(ref, null)).thenReturn(Optional.of(spot));
 
         //WHEN
-        var actual = spotsRepository.findByRef(ref);
+        var actual = spotsRepository.findByRef(ref, null);
 
         //THEN
         assertFalse(actual.isEmpty());
@@ -91,10 +91,10 @@ public class SpotsRepositoryTest {
     public void findByRef_returnsEmptyOptionalIfNoSuchSpotInDb() {
         //GIVEN
         var ref = "ref";
-        when(dao.findByRef(ref)).thenReturn(Optional.empty());
+        when(dao.findByRef(ref, null)).thenReturn(Optional.empty());
 
         //WHEN
-        var actual = spotsRepository.findByRef(ref);
+        var actual = spotsRepository.findByRef(ref, null);
 
         //THEN
         assertTrue(actual.isEmpty());
@@ -104,10 +104,10 @@ public class SpotsRepositoryTest {
     public void findByRef_throwsExceptionIfTwoDocumentsWithSameRefFound() {
         //GIVEN
         var ref = "ref";
-        when(dao.findByRef(ref)).thenThrow(new MultipleEntitiesFound("Multiple spots found"));
+        when(dao.findByRef(ref, null)).thenThrow(new MultipleEntitiesFound("Multiple spots found"));
 
         //WHEN //THEN
-        assertThrows(MultipleEntitiesFound.class, () -> spotsRepository.findByRef(ref));
+        assertThrows(MultipleEntitiesFound.class, () -> spotsRepository.findByRef(ref, null));
     }
 
     @Test
@@ -116,10 +116,10 @@ public class SpotsRepositoryTest {
         var ref = UUID.randomUUID();
         var spot = generateSpot();
         spot.setRef(ref);
-        when(dao.update(spot)).thenReturn(spot);
+        when(dao.update(spot, null)).thenReturn(spot);
 
         //WHEN
-        var actual = spotsRepository.update(spot);
+        var actual = spotsRepository.update(spot, null);
 
         //THEN
         assertEquals(actual, spot);
@@ -131,9 +131,9 @@ public class SpotsRepositoryTest {
         var ref = UUID.randomUUID();
 
         //WHEN
-        spotsRepository.delete(ref);
+        spotsRepository.delete(ref, null);
 
         //THEN
-        verify(dao).delete(ref.toString());
+        verify(dao).delete(ref.toString(), null);
     }
 }

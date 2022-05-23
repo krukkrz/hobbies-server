@@ -20,6 +20,7 @@ import java.util.UUID;
 @EqualsAndHashCode
 public class Spot {
     private ObjectId _id;
+    private String userId;
     private UUID ref;
     private String name;
     private String link;

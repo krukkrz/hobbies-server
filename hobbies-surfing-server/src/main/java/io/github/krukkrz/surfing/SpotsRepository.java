@@ -15,23 +15,23 @@ public class SpotsRepository {
         this.dao = dao;
     }
 
-    public void save(Spot spot) {
-        dao.save(spot);
+    public void save(Spot spot, String userId) {
+        dao.save(spot, userId);
     }
 
-    public List<Spot> findAll() {
-        return dao.findAll();
+    public List<Spot> findAll(String userId) {
+        return dao.findAll(userId);
     }
 
-    public Optional<Spot> findByRef(String ref) {
-        return dao.findByRef(ref);
+    public Optional<Spot> findByRef(String ref, String userId) {
+        return dao.findByRef(ref, userId);
     }
 
-    public Spot update(Spot spot) {
-        return dao.update(spot);
+    public Spot update(Spot spot, String userId) {
+        return dao.update(spot, userId);
     }
 
-    public void delete(UUID ref) {
-        dao.delete(ref.toString());
+    public void delete(UUID ref, String userId) {
+        dao.delete(ref.toString(), userId);
     }
 }

@@ -22,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -44,21 +46,22 @@ public class SpotsServiceTest {
         var ref = UUID.randomUUID();
 
         //WHEN
-        service.delete(ref);
+        service.delete(ref, null);
 
         //THEN
-        verify(repository).delete(ref);
+        verify(repository).delete(ref, null);
     }
 
     @Test
     public void update_updatesSpotAndReturnsItConvertedToDto() {
         //GIVEN
         var spotDto = generateSpotDto();
-        var spot = generateSpot();
-        when(repository.update(spot)).thenReturn(spot);
+        var userId = "userId";
+        var spot = generateSpot(null, userId);
+        when(repository.update(any(), eq(userId))).thenReturn(spot);
 
         //WHEN
-        var updated = service.update(spotDto);
+        var updated = service.update(spotDto, userId);
 
         //THEN
         assertSpotDtoEqualsSpot(updated, spot);
@@ -69,10 +72,10 @@ public class SpotsServiceTest {
         //GIVEN
         var ref = "ref";
         var spot = generateSpot();
-        when(repository.findByRef(ref)).thenReturn(Optional.of(spot));
+        when(repository.findByRef(ref, null)).thenReturn(Optional.of(spot));
 
         //WHEN
-        var spotDto = service.findByRef(ref);
+        var spotDto = service.findByRef(ref, null);
 
         //THEN
         assertSpotDtoEqualsSpot(spotDto, spot);
@@ -82,20 +85,20 @@ public class SpotsServiceTest {
     public void findByRef_throwsNoSuchElementExceptionIfNoSpotForRef() {
         //GIVEN
         var ref = "ref";
-        when(repository.findByRef(ref)).thenReturn(Optional.empty());
+        when(repository.findByRef(ref, null)).thenReturn(Optional.empty());
 
         //WHEN //THEN
-        assertThrows(NoSuchElementException.class, () -> service.findByRef(ref));
+        assertThrows(NoSuchElementException.class, () -> service.findByRef(ref, null));
     }
 
     @Test
     public void findAll_returnsListOfSpotsFromRepository() {
         //GIVEN
         var spots = generateSpots();
-        when(repository.findAll()).thenReturn(spots);
+        when(repository.findAll(null)).thenReturn(spots);
 
         //WHEN
-        var actual = service.findAll();
+        var actual = service.findAll(null);
 
         //THEN
         assertSpotsListEqualsDtosList(spots, actual);
@@ -104,10 +107,10 @@ public class SpotsServiceTest {
     @Test
     public void findAll_returnsEmptyListIfNoSpotsInRepository() {
         //GIVEN
-        when(repository.findAll()).thenReturn(emptyList());
+        when(repository.findAll(null)).thenReturn(emptyList());
 
         //WHEN
-        var actual = service.findAll();
+        var actual = service.findAll(null);
 
         //THEN
         assertTrue(actual.isEmpty());
@@ -118,12 +121,13 @@ public class SpotsServiceTest {
         //GIVEN
         var spotDto = generateSpotDto();
         var captor = ArgumentCaptor.forClass(Spot.class);
+        var userId = "userId";
 
         //WHEN
-        service.create(spotDto);
+        service.create(spotDto, userId);
 
         //THEN
-        verify(repository).save(captor.capture());
+        verify(repository).save(captor.capture(), eq(userId));
         var actual = captor.getValue();
         assertSpotDtoEqualsSpot(spotDto, actual);
     }
@@ -133,12 +137,13 @@ public class SpotsServiceTest {
         //GIVEN
         var spotDto = generateSpotDto();
         var captor = ArgumentCaptor.forClass(Spot.class);
+        var userId = "userId";
 
         //WHEN
-        service.create(spotDto);
+        service.create(spotDto, userId);
 
         //THEN
-        verify(repository).save(captor.capture());
+        verify(repository).save(captor.capture(), eq(userId));
         var value = captor.getValue();
         assertNotNull(value.getRef());
     }

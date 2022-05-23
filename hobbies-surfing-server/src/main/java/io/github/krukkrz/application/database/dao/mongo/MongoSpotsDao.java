@@ -4,10 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.client.model.UpdateOptions;
-import com.mongodb.client.model.Updates;
 import io.github.krukkrz.application.database.dao.Dao;
+import io.github.krukkrz.common.exceptions.ForbiddenException;
 import io.github.krukkrz.common.exceptions.MultipleEntitiesFound;
 import io.github.krukkrz.surfing.model.Spot;
 import lombok.extern.slf4j.Slf4j;
@@ -19,8 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Updates.*;
+import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
 import static io.github.krukkrz.application.context.ApplicationContext.mongoDatabase;
 import static io.github.krukkrz.application.context.ApplicationContext.objectMapper;
@@ -35,17 +35,17 @@ public class MongoSpotsDao implements Dao<Spot> {
     }
 
     @Override
-    public void save(Spot spot) {
+    public void save(Spot spot, String userId) {
         if (spot.get_id() == null) {
             spot.set_id(new ObjectId());
         }
-        Document document = spotToDocument(spot);
+        Document document = spotToDocument(spot, userId);
         collection.insertOne(document);
     }
 
     @Override
-    public List<Spot> findAll() {
-        MongoCursor<Document> cursor = collection.find().iterator();
+    public List<Spot> findAll(String userId) {
+        MongoCursor<Document> cursor = collection.find(eq("userId", userId)).iterator();
         var documents = new ArrayList<Document>();
         while (cursor.hasNext()) {
             documents.add(cursor.next());
@@ -55,8 +55,9 @@ public class MongoSpotsDao implements Dao<Spot> {
     }
 
     @Override
-    public Optional<Spot> findByRef(String ref) {
-        var cursor = collection.find(eq("ref", ref)).iterator();
+    public Optional<Spot> findByRef(String ref, String userId) {
+        var filter = and(eq("ref", ref), eq("userId", userId));
+        var cursor = collection.find(filter).iterator();
         var documents = new ArrayList<Document>();
         while (cursor.hasNext()) {
             documents.add(cursor.next());
@@ -69,10 +70,12 @@ public class MongoSpotsDao implements Dao<Spot> {
     }
 
     @Override
-    public Spot update(Spot spot) {
+    public Spot update(Spot spot, String userId) {
         var ref = String.valueOf(spot.getRef());
-        var existingSpot = findByRef(ref);
-        existingSpot.ifPresent(s -> spot.set_id(s.get_id()));
+        var existingSpot = findByRef(ref, userId);
+        existingSpot.ifPresentOrElse(s -> spot.set_id(s.get_id()), () -> {
+            throw new ForbiddenException();
+        });
 
         var updates = combine(
                 set("name", spot.getName()),
@@ -86,19 +89,20 @@ public class MongoSpotsDao implements Dao<Spot> {
         );
 
         var spotId = Optional.ofNullable(spot.get_id());
-        var filter = eq("_id", spotId.orElse(new ObjectId()).toString() );
+        var filter = eq("_id", spotId.orElse(new ObjectId()).toString());
         try {
             var result = collection.updateOne(filter, updates, getUpsertOptions());
             log.info("Updated {} documents", result.getMatchedCount());
         } catch (MongoException e) {
             log.error(e.getMessage());
         }
-        return findByRef(ref).get();
+        return findByRef(ref, null).get();
     }
 
     @Override
-    public void delete(String ref) {
-        var deleteResult = collection.deleteOne(eq("ref", ref));
+    public void delete(String ref, String userId) {
+        var filter = and(eq("ref", ref), eq("userId", userId));
+        var deleteResult = collection.deleteOne(filter);
         log.info("Removed {} documents", deleteResult.getDeletedCount());
     }
 
@@ -117,9 +121,10 @@ public class MongoSpotsDao implements Dao<Spot> {
     }
 
     @NotNull
-    private Document spotToDocument(Spot spot) {
+    private Document spotToDocument(Spot spot, String userId) {
         Document document = new Document();
         document.put("_id", spot.get_id().toString());
+        document.put("userId", userId);
         document.put("name", spot.getName());
         document.put("ref", spot.getRef().toString());
         document.put("country", spot.getCountry());
